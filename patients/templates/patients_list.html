@@ -3,6 +3,7 @@
 {% block title %}Patients - Bright Smile Dental Systems{% endblock %}
 
 {% block content %}
+{% load patient_filters %}
 <h1 class="mb-4">Patients</h1>
 <div class="row">
     <div class="col-md-12 mb-3">
@@ -33,7 +34,7 @@
                 {% for appointment in patient.patient_appointment.all %}
                 <td>{{ appointment.last_visit_date|default:"N/A" }}</td>
                 <td>{{ appointment.last_visit.doctorg.name|default:"N/A" }}</td>
-                <td>{{ appointment.last_visit_procedures|join:", "|default:"N/A" }}</td>
+                <td>{{ appointment.last_visit_procedures.all|join_names|default:"N/A" }}</td>
                 <td>{{ appointment.next_appointment_date|default:"N/A" }}</td>
                 <td>{{ appointment.next_appointment_doctor.name|default:"N/A" }}</td>
                 <td>{{ appointment.next_appointment_procedure|default:"N/A" }}</td>

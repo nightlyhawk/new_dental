@@ -11,6 +11,8 @@ class Procedure(models.Model):
 class Doctor(models.Model):
     npi = models.IntegerField()
     name = models.CharField(max_length=200)
+    email = models.EmailField(default="brightsmile@gmail.com")
+    phone_number = models.CharField(max_length=14, default='+234')
     office_address = models.CharField(max_length=200)
     specialties = models.ManyToManyField(Procedure, blank=True)
 

@@ -7,7 +7,7 @@
 
 <div class="card">
     <h2>Doctor Information</h2>
-    <form method="post">
+    <form action="{% url 'doctors_urls:update-doctor' doctor.id %}" method="post">
         {% csrf_token %}
         <label for="npi">NPI</label>
         <input type="text" id="npi" name="npi" value="{{ doctor.npi }}" required>
@@ -18,16 +18,21 @@
         <label for="email">Email</label>
         <input type="email" id="email" name="email" value="{{ doctor.email }}" required>
 
+        <label for="address">Office Address</label>
+        <input type="text" id="address" name="address" value="{{ doctor.office_address }}" required>
+
         <label for="phone_number">Phone Number</label>
         <input type="tel" id="phone_number" name="phone_number" value="{{ doctor.phone_number }}" required>
 
         <label for="specialties">Specialties</label>
         <select multiple id="specialties" name="specialties" required>
-            <option value="Cleaning" {% if "Cleaning" in doctor.specialties %}selected{% endif %}>Cleaning</option>
-            <option value="Filling" {% if "Filling" in doctor.specialties %}selected{% endif %}>Filling</option>
+            {% for procedure in procedures.all %}
+            <option value="{{ procedure.name }}" {% if procedure.name in doctor.specialties %}selected{% endif %}>{{ procedure.name }}</option>
+            {% endfor %}
+            <!-- <option value="Filling" {% if "Filling" in doctor.specialties %}selected{% endif %}>Filling</option>
             <option value="Root Canal" {% if "Root Canal" in doctor.specialties %}selected{% endif %}>Root Canal</option>
             <option value="Crown" {% if "Crown" in doctor.specialties %}selected{% endif %}>Crown</option>
-            <option value="Teeth Whitening" {% if "Teeth Whitening" in doctor.specialties %}selected{% endif %}>Teeth Whitening</option>
+            <option value="Teeth Whitening" {% if "Teeth Whitening" in doctor.specialties %}selected{% endif %}>Teeth Whitening</option> -->
         </select>
 
         <button type="submit" class="btn">Update Doctor Information</button>
@@ -37,12 +42,13 @@
 <div class="card">
     <h2>Affiliated Clinics</h2>
     <ul>
-        {% for affiliation in doctor.clinic_affiliations.all %}
+        {% for clinic in clinics.all %}
         <li>
-            <h3>{{ affiliation.clinic.name }}</h3>
-            <p>Office Address: {{ affiliation.office_address }}</p>
-            <p>Working Schedule: {{ affiliation.working_schedule }}</p>
+            <h3>{{ clinic.name }}</h3>
+            <p>Address: {{ clinic.city }}, {{ clinic.state }}</p>
         </li>
+        {% empty %}
+        <li><h3>No affiliated clinics</h3></li>
         {% endfor %}
     </ul>
 </div>
@@ -50,10 +56,12 @@
 <div class="card">
     <h2>Affiliated Patients</h2>
     <ul>
-        {% for patient in doctor.patients.all %}
+        {% for patient in patients.all %}
         <li>
-            <a href="{% url 'patient_detail' patient.id %}">{{ patient.name }}</a>
+            <a href="{% url 'patients_urls:detail-patients' patient.id %}">{{ patient.name }}</a>
         </li>
+        {% empty %}
+        <li><h3>No affiliated patients</h3></li>
         {% endfor %}
     </ul>
 </div>

@@ -3,8 +3,11 @@
 {% block title %}Clinics - Bright Smile Dental Systems{% endblock %}
 
 {% block content %}
+{% load clinic_filters %}
 <h1>Clinics</h1>
+{% if user.is_authenticated %}
 <a href="{% url 'clinics_urls:create-clinic' %}" class="btn">Add New Clinic</a>
+{% endif %}
 
 <div class="card-grid">
     {% for clinic in clinics %}
@@ -12,9 +15,11 @@
         <h2>{{ clinic.name }}</h2>
         <p>Phone: {{ clinic.phone_number }}</p>
         <p>Location: {{ clinic.city }}, {{ clinic.state }}</p>
-        <p>Doctors: {{ clinic.doctors_count }}</p>
-        <p>Patients: {{ clinic.patients_count }}</p>
+        <p>Doctors: {{ clinic.doctors.count }}</p>
+        <p>Patients:  {{ no_of_affiliated_patients|default:0|get:clinic.id }}</p>
+        {% if user.is_authenticated %}
         <a href="{% url 'clinics_urls:detail-clinic' clinic.id %}" class="btn">View Details</a>
+        {% endif %}
     </div>
     {% endfor %}
 </div>

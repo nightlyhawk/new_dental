@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Visit Form - Bright Smile Dental Systems{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <h2>Add Visit</h2>
+        <form action="{% url 'patients_urls:visit-add-patients' id %}" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn">Add Visit</button>
+        </form>
+    </div>
+{% endblock %}

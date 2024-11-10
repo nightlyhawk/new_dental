@@ -3,6 +3,7 @@
 {% block title %}Doctors - Bright Smile Dental Systems{% endblock %}
 
 {% block content %}
+{% load doctor_filters %}
 <h1>Doctors</h1>
 <a href="{% url 'doctors_urls:create-doctor' %}" class="btn">Add New Doctor</a>
 
@@ -11,9 +12,9 @@
     <div class="card">
         <h2>{{ doctor.name }}</h2>
         <p>NPI: {{ doctor.npi }}</p>
-        <p>Specialties: {{ doctor.specialties|join:", " }}</p>
+        <p>Specialties:  {{ visit.specialties.all|join_names }}</p>
         <p>Clinics: {{ doctor.working_in.count }}</p>
-        <p>Patients: {{ doctor.patients_count }}</p>
+        <p>Patients: {{ no_of_affiliated_patients|default:0|get:doctor.id }}</p>
         <a href="{% url 'doctors_urls:detail-doctor' doctor.id %}" class="btn">View Details</a>
     </div>
     {% endfor %}

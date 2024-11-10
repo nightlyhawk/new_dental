@@ -21,16 +21,20 @@
             <img src="{% static 'imgs/management.svg' %}" alt="Clinic Management" class="feature-icon">
             <h2>Clinic Management</h2>
             <p>Efficiently manage multiple clinics, staff, and resources all in one place.</p>
+            <a href="{% url 'clinics_urls:list-clinics' %}">View Registered Clinics</a>
+            <a href="{% url 'clinics_urls:create-clinic' %}">Register Clinic</a>
         </div>
         <div class="feature-card">
             <img src="{% static 'imgs/records.svg' %}" alt="Patient Records" class="feature-icon">
             <h2>Patient Records</h2>
             <p>Keep detailed patient records, treatment history, and appointment schedules at your fingertips.</p>
+            <a href="{% url 'patients_urls:add-patients' %}">Add Patient Record</a>
         </div>
         <div class="feature-card">
             <img src="{% static 'imgs/schedule.svg' %}" alt="Scheduling" class="feature-icon">
             <h2>Smart Scheduling</h2>
             <p>Optimize your clinic's schedule with our intelligent appointment booking system.</p>
+            <a href="{% url 'doctors_urls:create-doctor' %}">Add Doctor Record</a>
         </div>
     </div>
     

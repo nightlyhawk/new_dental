@@ -21,7 +21,7 @@ from django.conf.urls.static import static
 from .views import index
 
 urlpatterns = [
-    path('', index),
+    path('', index, name='home'),
     path('admin/', admin.site.urls),
     path('user/', include('user.urls', namespace='user_urls')),
     path('doctors/', include('doctors.urls', namespace='doctors_urls')),

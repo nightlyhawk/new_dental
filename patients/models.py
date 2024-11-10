@@ -25,7 +25,8 @@ class Patient(models.Model):
 
 class Visit(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.SET_NULL, null=True, related_name="patient_visits")
-    visit_date_time = models.DateTimeField()
+    visit_date = models.DateField()
+    visit_time = models.TimeField()
     doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True, related_name="patient_visited")
     clinic = models.ForeignKey(Clinic, on_delete=models.SET_NULL, null=True, related_name="patients_seen")
     procedures = models.ManyToManyField(Procedure, blank=True)

@@ -8,16 +8,18 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
-<body>
+<body style="display: flex; flex-direction: column; gap: 4rem;">
     <header>
         <nav class="container">
-            <div class="logo">Bright Smile Dental Systems</div>
+            <div class="logo"><a href="{% url 'home' %}" style="text-decoration: none; color: white;">Bright Smile Dental Systems</a></div>
+            {% if user.is_authenticated %}
             <ul class="nav-links">
                 <li><a href="{% url 'clinics_urls:list-clinics' %}">Clinics</a></li>
                 <li><a href="{% url 'doctors_urls:list-doctors' %}">Doctors</a></li>
                 <li><a href="{% url 'patients_urls:list-patients' %}">Patients</a></li>
                 <li><a href="{% url 'user_urls:logout' %}">Logout</a></li>
             </ul>
+            {% endif %}
         </nav>
     </header>
 

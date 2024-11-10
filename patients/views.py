@@ -7,10 +7,12 @@ from .models import Patient, Visit, Appointment
 from .forms import PatientForm, AppointmentForm, VisitForm, ScheduleAppointmentForm
 from clinics.models import Clinic
 from doctors.models import Procedure, Schedule, Doctor
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 # Create your views here.
-class PatientListView(ListView):
+class PatientListView(LoginRequiredMixin, ListView):
     model = Patient
     context_object_name = 'patients'
     template_name = "patients_list.html"
@@ -32,15 +34,15 @@ class PatientListView(ListView):
     #     return context
 
 
-class PatientDetailView(DetailView):
+class PatientDetailView(LoginRequiredMixin, DetailView):
     model = Patient
     context_object_name = 'patient'
     template_name = "patient_detail.html"
 
     def get_object(self, **kwargs):
         pk = self.kwargs.get('pk')
-        view_patient = Patient.objects.get(pk=pk)
-        return view_patient
+        self.patient = Patient.objects.prefetch_related('patient_visits', 'patient_appointment').get(pk=pk)
+        return self.patient
 
     # def get_queryset(self) -> QuerySet[Any]:
     #     return super(PatientDetailView).get_queryset()(self)
@@ -49,24 +51,25 @@ class PatientDetailView(DetailView):
     #     self.publisher = get_object_or_404(Publisher, name=self.kwargs["publisher"])
     #     return Book.objects.filter(publisher=self.publisher)
     
-    # def get_context_data(self, **kwargs):
-    #     # Call the base implementation first to get a context
-    #     context = super().get_context_data(**kwargs)
-    #     # Add in a QuerySet of all the books
-    #     visits = Visit.objects.all()
-    #     context["visits"] = []
-    #     return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        appointment = Appointment.objects.get(patient=self.patient)
+        context["appointment"] = appointment
+        print(context)
+        return context
 
+@login_required
 def add_visit(request, pk):
     if request.method == 'POST':
         form = VisitForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('patients_url:list-patients', form.cleaned_data['id'])
+            return redirect('patients_urls:list-patients')
     else:
-        patient = Patient.objects.get(id=pk)
-        form = VisitForm()
-    return render(request, 'schedule_appt.html', {'form': form, 'patient': patient})
+        initial_data = {'patient': pk}
+        form = VisitForm(initial=initial_data)
+    return render(request, 'visit.html', {'form': form, 'id': pk})
+
 
 
 def add_patient(request):
@@ -74,12 +77,26 @@ def add_patient(request):
         form = PatientForm(request.POST)
         if form.is_valid():
             form.save()
+            if request.user.is_authenticated():
+                return redirect("patients_urls:list-patients")
+            return render(request, 'success.hrml', {'action_text': 'create another patient record?', 'action_url': 'patients_urls:add-patient'})
+    else:
+        form = PatientForm()
+    return render(request, 'create_patient.html', {'form': form})
+
+@login_required
+def update_patient(request, pk):
+    if request.method == 'POST':
+        patient = Patient.objects.get(id=pk)
+        form = PatientForm(request.POST, instance=patient)
+        if form.is_valid():
+            form.save()
             return redirect("patients_urls:list-patients")
     else:
         form = PatientForm()
     return render(request, 'create_patient.html', {'form': form})
 
-
+@login_required
 def schedule_appointment(request, pk):
     if request.method == 'POST':
         form = ScheduleAppointmentForm(request.POST)

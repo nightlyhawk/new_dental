@@ -3,11 +3,13 @@
 {% block title %}{{ patient.name }} - Bright Smile Dental Systems{% endblock %}
 
 {% block content %}
+{% load patient_filters %}
+
 <h1>{{ patient.name }}</h1>
 
 <div class="card">
     <h2>Patient Information</h2>
-    <form method="post">
+    <form action="{% url 'patients_urls:edit-patients' patient.id %}" method="post">
         {% csrf_token %}
         <label for="name">Name</label>
         <input type="text" id="name" name="name" value="{{ patient.name }}" required>
@@ -37,13 +39,13 @@
 
 <div class="card">
     <h2>Next Appointment</h2>
-    {% if patient.next_appointment %}
-    <p>Date: {{ patient.next_appointment.date }}</p>
-    <p>Time: {{ patient.next_appointment.time }}</p>
-    <p>Clinic: {{ patient.next_appointment.clinic.name }}</p>
-    <p>Doctor: {{ patient.next_appointment.doctor.name }}</p>
-    <p>Procedure: {{ patient.next_appointment.procedure }}</p>
-    <p>Date Booked: {{ patient.next_appointment.date_booked }}</p>
+    {% if appointment and appointment.next_appointment %}
+    <p>Date: {{ appointment.next_appointment_date }}</p>
+    <p>Time: {{ appointment.next_appointment_time }}</p>
+    <!-- <p>Clinic: {{ appointnment.next_appointment.clinic.name }}</p> -->
+    <p>Doctor: {{ appointment.next_appointment_doctor.name }}</p>
+    <p>Procedure: {{ appointment.next_appointment_procedure }}</p>
+    <p>Date Booked: {{ appointment.next_appointment_date }}</p>
     {% else %}
     <p>No upcoming appointments.</p>
     {% endif %}
@@ -64,18 +66,18 @@
             </tr>
         </thead>
         <tbody>
-            {% for visit in patient.visits.all %}
+            {% for visit in patient.patient_visits.all %}
             <tr>
-                <td>{{ visit.date }}</td>
-                <td>{{ visit.time }}</td>
+                <td>{{ visit.visit_date }}</td>
+                <td>{{ visit.visit_time }}</td>
                 <td>{{ visit.doctor.name }}</td>
                 <td>{{ visit.clinic.name }}</td>
-                <td>{{ visit.procedures|join:", " }}</td>
-                <td>{{ visit.notes }}</td>
+                <td>{{ visit.procedures.all|join_names }}</td>
+                <td>{{ visit.doctors_notes }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <a href="{% url 'patients_urls:add-visit-patients' patient.id %}" class="btn">Add New Visit</a>
+    <a href="{% url 'patients_urls:visit-add-patients' patient.id %}" class="btn">Add New Visit</a>
 </div>
 {% endblock %}

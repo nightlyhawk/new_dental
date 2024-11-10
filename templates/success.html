@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Success - Bright Smile Dental Systems{% endblock %}
+
+{% block content %}
+<div class="success-container">
+    <div class="success-card">
+        <div class="success-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+        </div>
+        <h1 class="success-title">Success!</h1>
+        <p class="success-message">{{ message|default:"Your action was completed successfully." }}</p>
+        <div class="success-actions">
+            <a href="{% url 'home' %}" class="btn btn-primary">Back</a>
+            {% if action_url %}
+                <a href="{% url action_url %}" class="btn btn-secondary">{{ action_text|default:"Continue" }}</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .success-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 100px);
+        padding: 2rem;
+    }
+
+    .success-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        text-align: center;
+        max-width: 400px;
+        width: 100%;
+    }
+
+    .success-icon {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+
+    .success-title {
+        color: var(--primary-color);
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .success-message {
+        color: var(--text-color);
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+    .success-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-size: 1rem;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #3a7bc8;
+    }
+
+    .btn-secondary {
+        background-color: var(--light-gray);
+        color: var(--text-color);
+    }
+
+    .btn-secondary:hover {
+        background-color: #e0e0e0;
+    }
+
+    @media (max-width: 480px) {
+        .success-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}

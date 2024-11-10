@@ -37,17 +37,17 @@
                 <td>{{ appointment.next_appointment_date|default:"N/A" }}</td>
                 <td>{{ appointment.next_appointment_doctor.name|default:"N/A" }}</td>
                 <td>{{ appointment.next_appointment_procedure|default:"N/A" }}</td>
-                <td>
-                    <a href="{% url 'patients_urls:detail-patients' patient.id %}" class="btn btn-sm btn-primary">View Details</a>
-                </td>
                 {% empty %}
                 <td colspan="6"><h3 style="text-align: center;">No appointments found</h3></td>
                 {% endfor %}
+                <td>
+                    <a href="{% url 'patients_urls:detail-patients' patient.id %}" class="btn btn-sm btn-primary">View Details</a>
+                </td>
             </tr>
             {% endfor %}
             {% else %}
             <tr>
-                <td colspan="9"><h3 style="text-align: center;">No appointments yet</h3></td>
+                <td colspan="9"><h3 style="text-align: center;">No patients yet</h3></td>
             </tr>
             {% endif %}
         </tbody>

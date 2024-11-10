@@ -6,7 +6,8 @@ from django.views.generic import ListView, DetailView
 from .models import Patient, Visit, Appointment
 from .forms import PatientForm, AppointmentForm, VisitForm, ScheduleAppointmentForm
 from clinics.models import Clinic
-from doctors.models import Procedure, Schedule
+from doctors.models import Procedure, Schedule, Doctor
+
 
 # Create your views here.
 class PatientListView(ListView):
@@ -84,25 +85,35 @@ def schedule_appointment(request, pk):
         form = ScheduleAppointmentForm(request.POST)
         if form.is_valid():
             patient = Patient.objects.get(id=pk)
-            procedure = form.cleaned_data['procedure']
-            clinic = form.cleaned_data['clinic']
-            doctor = form.cleaned_data['doctor']
+            procedure = Procedure.objects.get(id=form.cleaned_data['procedure'])
+            # clinic = Clinic.objects.get(id=form.cleaned_data['clinic'])
+            doctor = Doctor.objects.get(id=form.cleaned_data['doctor'])
             time_slot = form.cleaned_data['time_slot']
             appointment, created = Appointment.objects.get_or_create(patient=patient)
+            appointment.last_visit_date = appointment.next_appointment_date
+            appointment.last_visit_doctor = appointment.last_visit_doctor
+            appointment.last_visit_procedures.add(appointment.next_appointment_procedure)
+            appointment.last_visit_time = appointment.next_appointment_time
             appointment.next_appointment = True
             day = Schedule.objects.get(id=time_slot).day
-            today = datetime.datetime.day
-            day_name = datetime.datetime.weekday
-            days = ['Monday', 'Teusday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+            fulldate = datetime.datetime.now()
+            today = fulldate.day
+            day_name = fulldate.weekday()
+            days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
             if day_name == days.index(day):
-                date = datetime.datetime(datetime.date.year, datetime.datetime.month, day)
-            else:
-                day= day + days.index(day) + 1
-                date = datetime.datetime(datetime.date.year, datetime.datetime.month, day)
+                date = datetime.datetime(fulldate.year, datetime.datetime.month, day)
+            elif day_name < days.index(day):
+                day= today + 1 + days.index(day) + 1
+                date = datetime.datetime(fulldate.year, fulldate.month, day)
+            elif day_name > days.index(day):
+                day= today + len(days) + days.index(day) + 1
+                date = datetime.datetime(fulldate.year, fulldate.month, day)
+            time = datetime.time(time_slot)
             appointment.next_appointment_date = date
-            appointment.next_appointment_doctor
-            appointment.next_appointment_procedure
-            appointment.next_appointment_time = time_slot
+            appointment.next_appointment_doctor = doctor
+            appointment.next_appointment_procedure = procedure
+            appointment.next_appointment_time = time
+            appointment.save()
             return redirect("patients_urls:list-patients")
     else:
         patient = Patient.objects.get(id=pk)

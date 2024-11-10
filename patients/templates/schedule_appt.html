@@ -5,7 +5,7 @@
 {% block content %}
 <h1>Schedule Appointment for {{ patient.name }}</h1>
 
-<form action="{% url 'patients_url:schedule-appointment' patient.id %}" method="post" id="appointmentForm">
+<form action="{% url 'patients_urls:schedule-appointment' patient.id %}" method="post" id="appointmentForm">
     {% csrf_token %}
     <div class="card">
         <h2>Step 1: Select Procedure</h2>

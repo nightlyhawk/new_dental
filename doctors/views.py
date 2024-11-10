@@ -19,23 +19,12 @@ class DoctorListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self,**kwargs):
         context = super().get_context_data(**kwargs)
-        #both in appointmnt add to list and return
-        # doctors = self.object_list
         patients_count = (
             Visit.objects.values('doctor')
             .annotate(total_patients=Count('patient', distinct=True))
         )
         
-        # Calculate the number of unique clinics for each doctor
-        # clinics_count = (
-        #     Appointment.objects.values('doctor')
-        #     .annotate(total_clinics=Count('clinic', distinct=True))
-        # )
-        # no_of_patients_clinics = doctors.values('doctor_appointments').annotate(total=Count('id'))
-        # context['no_of_affiliated_patients'] = no_of_patients_clinics
-        # context['no_of_affiliated_clinics'] = no_of_patients_clinics
         context['no_of_affiliated_patients'] = {item['doctor']: item['total_patients'] for item in patients_count}
-        # context['no_of_affiliated_clinics'] = {item['doctor']: item['total_clinics'] for item in clinics_count}
         return context
     
 def doctor_create(request):
@@ -43,9 +32,9 @@ def doctor_create(request):
         form = DoctorForm(request.POST)
         if form.is_valid():
             form.save()
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 return  redirect('doctor_detail.html', form.cleaned_data['id'])
-            return render(request, 'success.hrml', {'action_text': 'create another doctor record?', 'action_url': 'doctors_urls:create-doctor'})
+            return render(request, 'success.html', {'action_text': 'create another doctor record?', 'action_url': 'doctors_urls:create-doctor'})
     else:
         form = DoctorForm()
     return render(request, 'doctor_create.html', {'form': form})

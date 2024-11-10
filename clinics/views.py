@@ -30,9 +30,9 @@ def clinic_create(request):
         form = ClinicForm(request.POST)
         if form.is_valid():
             form.save()
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 return  redirect('clinic_detail.html', form.cleaned_data['id'])
-            return render(request, 'success.hrml', {'action_text': 'register another clinic?', 'action_url': 'clinics_urls:create-clinic'})
+            return render(request, 'success.html', {'action_text': 'register another clinic?', 'action_url': 'clinics_urls:create-clinic'})
     else:
         form = ClinicForm()
     return render(request, 'clinic_create.html', {'form': form})

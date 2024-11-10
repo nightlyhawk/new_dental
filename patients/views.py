@@ -18,20 +18,7 @@ class PatientListView(LoginRequiredMixin, ListView):
     template_name = "patients_list.html"
 
     def get_queryset(self):
-        # Prefetch related appointments to avoid multiple database queries
         return Patient.objects.prefetch_related('patient_appointment').all()
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-        
-    #     # Aggregate or filter Appointment data by Doctor
-    #     appointments = {
-    #         apt.patient.pk: apt
-    #         for apt in Appointment.objects.all()
-    #     }
-        
-    #     # Add the appointments dictionary to context
-    #     context['appointments'] = appointments
-    #     return context
 
 
 class PatientDetailView(LoginRequiredMixin, DetailView):
@@ -44,18 +31,11 @@ class PatientDetailView(LoginRequiredMixin, DetailView):
         self.patient = Patient.objects.prefetch_related('patient_visits', 'patient_appointment').get(pk=pk)
         return self.patient
 
-    # def get_queryset(self) -> QuerySet[Any]:
-    #     return super(PatientDetailView).get_queryset()(self)
-
-    # def get_queryset(self):
-    #     self.publisher = get_object_or_404(Publisher, name=self.kwargs["publisher"])
-    #     return Book.objects.filter(publisher=self.publisher)
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         appointment = Appointment.objects.get(patient=self.patient)
         context["appointment"] = appointment
-        print(context)
         return context
 
 @login_required
@@ -77,9 +57,9 @@ def add_patient(request):
         form = PatientForm(request.POST)
         if form.is_valid():
             form.save()
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 return redirect("patients_urls:list-patients")
-            return render(request, 'success.hrml', {'action_text': 'create another patient record?', 'action_url': 'patients_urls:add-patient'})
+            return render(request, 'success.html', {'action_text': 'create another patient record?', 'action_url': 'patients_urls:add-patient'})
     else:
         form = PatientForm()
     return render(request, 'create_patient.html', {'form': form})

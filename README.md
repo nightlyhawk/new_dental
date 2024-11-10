@@ -1,8 +1,14 @@
-# new_dental
+# Bright_Smile_Management_Systems
 ## Overview
 This project provides an interface for the staff of Bright Smile yo manage their medical services, staff and clients.  
 ### BaseUrl
 - localhost
+### Setup Procedure 
+- pip install -r requirements.txt
+- python manage.py makemigrations
+- python manage.py migrate
+- python manage.py collectstatic
+- python manage.py runserver
 ### Endpoints Available
 #### - /patients/add/<br />
       method: GET, POST

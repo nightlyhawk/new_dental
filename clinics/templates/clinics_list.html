@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Clinics - Bright Smile Dental Systems{% endblock %}
+
+{% block content %}
+<h1>Clinics</h1>
+<a href="{% url 'clinics_urls:create-clinic' %}" class="btn">Add New Clinic</a>
+
+<div class="card-grid">
+    {% for clinic in clinics %}
+    <div class="card">
+        <h2>{{ clinic.name }}</h2>
+        <p>Phone: {{ clinic.phone_number }}</p>
+        <p>Location: {{ clinic.city }}, {{ clinic.state }}</p>
+        <p>Doctors: {{ clinic.doctors_count }}</p>
+        <p>Patients: {{ clinic.patients_count }}</p>
+        <a href="{% url 'clinics_urls:detail-clinic' clinic.id %}" class="btn">View Details</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

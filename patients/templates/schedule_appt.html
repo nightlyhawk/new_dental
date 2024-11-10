@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% block title %}Schedule Appointment - {{ patient.name }} - Bright Smile Dental Systems{% endblock %}
+
+{% block content %}
+<h1>Schedule Appointment for {{ patient.name }}</h1>
+
+<form action="{% url 'patients_url:schedule-appointment' patient.id %}" method="post" id="appointmentForm">
+    {% csrf_token %}
+    <div class="card">
+        <h2>Step 1: Select Procedure</h2>
+        <label for="procedure">Procedure</label>
+        <select id="procedure" name="procedure" required>
+            <option value="">Select a procedure</option>
+            {% for procedure in procedures %}
+            <option value="{{ procedure.id }}">{{ procedure.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="card">
+        <h2>Step 2: Select Clinic</h2>
+        <label for="clinic">Clinic</label>
+        <select id="clinic" name="clinic" required disabled>
+            <option value="">Select a clinic</option>
+        </select>
+    </div>
+
+    <div class="card">
+        <h2>Step 3: Select Doctor</h2>
+        <label for="doctor">Doctor</label>
+        <select id="doctor" name="doctor" required disabled>
+            <option value="">Select a doctor</option>
+        </select>
+    </div>
+
+    <div class="card">
+        <h2>Step 4: Select Time Slot</h2>
+        <label for="time_slot">Time Slot</label>
+        <select id="time_slot" name="time_slot" required disabled>
+            <option value="">Select a time slot</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn" id="scheduleButton" disabled>Schedule Appointment</button>
+</form>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const procedureSelect = document.getElementById('procedure');
+        const clinicSelect = document.getElementById('clinic');
+        const doctorSelect = document.getElementById('doctor');
+        const timeSlotSelect = document.getElementById('time_slot');
+        const scheduleButton = document.getElementById('scheduleButton');
+
+        procedureSelect.addEventListener('change', function() {
+            doctorSelect.innerHTML = '<option value="">Select a doctor</option>';
+            clinicSelect.innerHTML = '<option value="">Select a clinic</option>';
+            timeSlotSelect.innerHTML = '<option value="">Select a time slot</option>';
+            
+            if (this.value) {
+                clinicSelect.disabled = false;
+                fetchClinics(this.value);
+            } else {
+                doctorSelect.disabled = true;
+                timeSlotSelect.disabled = true;
+                scheduleButton.disabled = true;
+            }
+        });
+
+        clinicSelect.addEventListener('change', function() {
+            doctorSelect.innerHTML = '<option value="">Select a doctor</option>';
+            timeSlotSelect.innerHTML = '<option value="">Select a time slot</option>';
+            
+            if (this.value) {
+                doctorSelect.disabled = false;
+                fetchDoctors(this.value);
+            } else {
+                doctorSelect.disabled = true;
+                timeSlotSelect.disabled = true;
+                scheduleButton.disabled = true;
+            }
+        });
+
+        doctorSelect.addEventListener('change', function() {
+            timeSlotSelect.innerHTML = '<option value="">Select a time slot</option>';
+            
+            if (this.value) {
+                timeSlotSelect.disabled = false;
+                fetchTimeSlots(this.value);
+            } else {
+                timeSlotSelect.disabled = true;
+                scheduleButton.disabled = true;
+            }
+        });
+
+        timeSlotSelect.addEventListener('change', function() {
+            scheduleButton.disabled = !this.value;
+        });
+
+        function fetchClinics(procedure) {
+            fetch(`${window.location.protocol + "//" + window.location.host}/clinics/retrieve/clinics/by/procedure/${procedure}/`, {
+                    method: "GET",
+                    credentials: "include",
+                    // headers: {"Authorization": `JWT ${token.access}`, "X-CSRFToken": getCookie("csrftoken")}, 
+                })
+            .then(response => {
+                if(!response.ok){
+                    throw new Error(JSON.stringify(response.json()))
+                }else{
+                    return response.json()
+                }
+            })
+            .then(message => {
+                console.log(message)
+                message.clinics.forEach(element => {
+                    const option = document.createElement('option');
+                    // option.id = element.id
+                    option.value = element.id
+                    option.innerText = element.name
+                    clinicSelect.appendChild(option);
+                });
+                
+            })
+            .catch(error => alert(error))
+        }
+
+        function fetchDoctors(clinic) {
+            fetch(`${window.location.protocol + "//" + window.location.host}/clinics/retrieve/doctors/${clinic}/`, {
+                    method: "GET",
+                    credentials: "include",
+                    // headers: {"Authorization": `JWT ${token.access}`, "X-CSRFToken": getCookie("csrftoken")}, 
+                })
+            .then(response => {
+                if(!response.ok){
+                    throw new Error(JSON.stringify(response.json()))
+                }else{
+                    return response.json()
+                }
+            })
+            .then(message => {
+                message.doctors.forEach(element => {
+                    const option = document.createElement('option');
+                    option.value = element.id
+                    option.innerText = element.name
+                    doctorSelect.appendChild(option)
+                });
+                
+            })
+            .catch(error => alert(error))
+        }
+
+        function fetchTimeSlots(doctor) {
+            fetch(`${window.location.protocol + "//" + window.location.host}/doctors/retrieve/schedule/${doctor}/`, {
+                    method: "GET",
+                    credentials: "include",
+                    // headers: {"Authorization": `JWT ${token.access}`, "X-CSRFToken": getCookie("csrftoken")}, 
+                })
+            .then(response => {
+                if(!response.ok){
+                    throw new Error(JSON.stringify(response.json()))
+                }else{
+                    return response.json()
+                }
+            })
+            .then(message => {
+                message.schedules.forEach(element => {
+                    const option = document.createElement('option');
+                    option.value = element.id
+                    option.innerText = element.startTime
+                    timeSlotSelect.appendChild(option);
+                });
+                
+            })
+            .catch(error => alert(error))
+        }
+    });
+</script>
+{% endblock %}

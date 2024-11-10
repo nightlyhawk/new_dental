@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Bright Smile Dental Systems{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="center-auth">
+    <main class="container center">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="container" style="text-align: center;">
+            <p>&copy; 2023 Bright Smile Dental Systems. All rights reserved.</p>
+        </div>
+    </footer>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

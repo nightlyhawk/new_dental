@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bright Smile Dental Systems</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    
+<main class="container">
+    <div class="hero">
+        <h1>Welcome to Bright Smile Dental Systems</h1>
+        <p>Streamline your dental practice management with our comprehensive platform</p>
+        <a href="{% url 'user_urls:login' %}" class="btn btn-large">Get Started</a>
+    </div>
+    
+    <div class="features">
+        <div class="feature-card">
+            <img src="{% static 'imgs/management.svg' %}" alt="Clinic Management" class="feature-icon">
+            <h2>Clinic Management</h2>
+            <p>Efficiently manage multiple clinics, staff, and resources all in one place.</p>
+        </div>
+        <div class="feature-card">
+            <img src="{% static 'imgs/records.svg' %}" alt="Patient Records" class="feature-icon">
+            <h2>Patient Records</h2>
+            <p>Keep detailed patient records, treatment history, and appointment schedules at your fingertips.</p>
+        </div>
+        <div class="feature-card">
+            <img src="{% static 'imgs/schedule.svg' %}" alt="Scheduling" class="feature-icon">
+            <h2>Smart Scheduling</h2>
+            <p>Optimize your clinic's schedule with our intelligent appointment booking system.</p>
+        </div>
+    </div>
+    
+    <div class="cta-section">
+        <h2>Ready to transform your dental practice?</h2>
+        <p>Join thousands of dental professionals who trust Bright Smile Dental Systems</p>
+        <a href="{% url 'user_urls:register' %}" class="btn btn-accent btn-large">Sign Up Now</a>
+    </div>
+</main>
+<footer>
+    <div class="container">
+        <p>&copy; 2023 Bright Smile Dental Systems. All rights reserved.</p>
+    </div>
+</footer>
+<style>
+    .hero {
+        background-color: var(--primary-color);
+        color: white;
+        text-align: center;
+        padding: 4rem 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .hero h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: white;
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+    }
+
+    .btn-large {
+        font-size: 1.2rem;
+        padding: 0.75rem 1.5rem;
+        background-color: white;
+        color: var(--primary-color);
+    }
+
+    .features {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+    }
+
+    .feature-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        margin: 1rem;
+        text-align: center;
+        flex-basis: calc(33.333% - 2rem);
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .feature-icon {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 1rem;
+    }
+
+    .cta-section {
+        background-color: var(--secondary-color);
+        text-align: center;
+        padding: 4rem 2rem;
+        margin-top: 2rem;
+    }
+
+    .cta-section h2 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .cta-section p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+    }
+
+    @media (max-width: 768px) {
+        .feature-card {
+            flex-basis: calc(50% - 2rem);
+        }
+    }
+
+    @media (max-width: 480px) {
+        .feature-card {
+            flex-basis: 100%;
+        }
+    }
+</style>
+    
+</body>
+</html>

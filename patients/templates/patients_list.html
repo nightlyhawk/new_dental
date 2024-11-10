@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Patients - Bright Smile Dental Systems{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Patients</h1>
+<div class="row">
+    <div class="col-md-12 mb-3">
+        <a href="{% url 'patients_urls:add-patients' %}" class="btn btn-primary" style="margin-bottom: 1rem;">Add New Patient</a>
+    </div>
+</div>
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Date of Birth</th>
+                <th>Last Visit Date</th>
+                <th>Last Visit Doctor</th>
+                <th>Last Visit Procedures</th>
+                <th>Next Appointment Date</th>
+                <th>Next Appointment Doctor</th>
+                <th>Next Appointment Procedure</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if patients %}
+            {% for patient in patients %}
+            <tr>
+                <td>{{ patient.name }}</td>
+                <td>{{ patient.d_o_b }}</td>
+                {% for appointment in patient.patient_appointment.all %}
+                <td>{{ appointment.last_visit_date|default:"N/A" }}</td>
+                <td>{{ appointment.last_visit.doctorg.name|default:"N/A" }}</td>
+                <td>{{ appointment.last_visit_procedures|join:", "|default:"N/A" }}</td>
+                <td>{{ appointment.next_appointment_date|default:"N/A" }}</td>
+                <td>{{ appointment.next_appointment_doctor.name|default:"N/A" }}</td>
+                <td>{{ appointment.next_appointment_procedure|default:"N/A" }}</td>
+                <td>
+                    <a href="{% url 'patients_urls:detail-patients' patient.id %}" class="btn btn-sm btn-primary">View Details</a>
+                </td>
+                {% empty %}
+                <td colspan="6"><h3 style="text-align: center;">No appointments found</h3></td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+                <td colspan="9"><h3 style="text-align: center;">No appointments yet</h3></td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

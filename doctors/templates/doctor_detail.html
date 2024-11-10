@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ doctor.name }} - Bright Smile Dental Systems{% endblock %}
+
+{% block content %}
+<h1>{{ doctor.name }}</h1>
+
+<div class="card">
+    <h2>Doctor Information</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label for="npi">NPI</label>
+        <input type="text" id="npi" name="npi" value="{{ doctor.npi }}" required>
+
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" value="{{ doctor.name }}" required>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" value="{{ doctor.email }}" required>
+
+        <label for="phone_number">Phone Number</label>
+        <input type="tel" id="phone_number" name="phone_number" value="{{ doctor.phone_number }}" required>
+
+        <label for="specialties">Specialties</label>
+        <select multiple id="specialties" name="specialties" required>
+            <option value="Cleaning" {% if "Cleaning" in doctor.specialties %}selected{% endif %}>Cleaning</option>
+            <option value="Filling" {% if "Filling" in doctor.specialties %}selected{% endif %}>Filling</option>
+            <option value="Root Canal" {% if "Root Canal" in doctor.specialties %}selected{% endif %}>Root Canal</option>
+            <option value="Crown" {% if "Crown" in doctor.specialties %}selected{% endif %}>Crown</option>
+            <option value="Teeth Whitening" {% if "Teeth Whitening" in doctor.specialties %}selected{% endif %}>Teeth Whitening</option>
+        </select>
+
+        <button type="submit" class="btn">Update Doctor Information</button>
+    </form>
+</div>
+
+<div class="card">
+    <h2>Affiliated Clinics</h2>
+    <ul>
+        {% for affiliation in doctor.clinic_affiliations.all %}
+        <li>
+            <h3>{{ affiliation.clinic.name }}</h3>
+            <p>Office Address: {{ affiliation.office_address }}</p>
+            <p>Working Schedule: {{ affiliation.working_schedule }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="card">
+    <h2>Affiliated Patients</h2>
+    <ul>
+        {% for patient in doctor.patients.all %}
+        <li>
+            <a href="{% url 'patient_detail' patient.id %}">{{ patient.name }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

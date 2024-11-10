@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ clinic.name }} - Bright Smile Dental Systems{% endblock %}
+
+{% block content %}
+<h1>{{ clinic.name }}</h1>
+
+<div class="card">
+    <h2>Clinic Information</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" value="{{ clinic.name }}" required>
+
+        <label for="address">Address</label>
+        <input type="text" id="address" name="address" value="{{ clinic.address }}" required>
+
+        <label for="phone_number">Phone Number</label>
+        <input type="tel" id="phone_number" name="phone_number" value="{{ clinic.phone_number }}" required>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" value="{{ clinic.email }}" required>
+
+        <button type="submit" class="btn">Update Clinic Information</button>
+    </form>
+</div>
+
+<div class="card">
+    <h2>Affiliated Doctors</h2>
+    <ul>
+        {% for affiliation in clinic.doctor_affiliations.all %}
+        <li>
+            <h3>{{ affiliation.doctor.name }}</h3>
+            <p>Office Address: {{ affiliation.office_address }}</p>
+            {% for day in affiliation.schedule %}
+            <form method="post">
+                {% csrf_token %}
+                <label for="day">Day</label>
+                <input type="text" id="day" name="day" value="{{ day.day }}" required>
+        
+                <label for="startTime">Checkin</label>
+                <input type="text" id="startTime" name="startTime" value="{{ day.startTime }}" required>
+        
+                <label for="endTIme">Checkout</label>
+                <input type="text" id="endTIme" name="endTIme" value="{{ day.endTIme }}" required>
+
+                <button type="submit" class="btn">Update {{ day.day }}</button>
+            </form>
+            {% endfor %}
+            <!-- <p>Working Schedule: {{ affiliation.working_schedule }}</p> -->
+            <a href="{% url 'edit_affiliation' affiliation.id %}" class="btn">Edit Affiliation</a>
+        </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'add_affiliation' clinic.id %}" class="btn">Add Doctor Affiliation</a>
+</div>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Add Doctors to {{ clinic.name }} - Bright Smile Dental Systems{% endblock %}
+
+{% block content %}
+<h1>Add Doctors to {{ clinic.name }}</h1>
+
+<div class="card">
+    <h2>Current Doctors</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Specialties</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for affiliation in clinic.doctor_affiliations.all %}
+            <tr>
+                <td>{{ affiliation.doctor.name }}</td>
+                <td>{{ affiliation.doctor.specialties|join:", " }}</td>
+                <td>
+                    <a href="{% url 'edit_doctor_affiliation' clinic.id affiliation.id %}" class="btn btn-small">Edit</a>
+                    <form method="post" action="{% url 'remove_doctor_from_clinic' clinic.id affiliation.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-small btn-danger">Remove</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">No doctors affiliated with this clinic yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h2>Add New Doctor</h2>
+    <form method="post" action="{% url 'add_doctor_to_clinic' clinic.id %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="doctor">Select Doctor</label>
+            <select id="doctor" name="doctor" required>
+                <option value="">Choose a doctor</option>
+                {% for doctor in available_doctors %}
+                <option value="{{ doctor.id }}">{{ doctor.name }} - {{ doctor.specialties|join:", " }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="office_address">Office Address</label>
+            <input type="text" id="office_address" name="office_address" required>
+        </div>
+        <div class="form-group">
+            <label for="working_schedule">Working Schedule</label>
+            <textarea id="working_schedule" name="working_schedule" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn">Add Doctor to Clinic</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+    input[type="text"],
+    select,
+    textarea {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid var(--light-gray);
+        border-radius: 4px;
+    }
+    .btn-small {
+        font-size: 0.8rem;
+        padding: 0.25rem 0.5rem;
+    }
+    .btn-danger {
+        background-color: var(--accent-color);
+    }
+    .btn-danger:hover {
+        background-color: #ff5252;
+    }
+</style>
+{% endblock %}

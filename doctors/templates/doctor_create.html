@@ -1,0 +1,15 @@
+{% extends 'start.html' %}
+
+{% block title %}Doctor Record - Bright Smile Dental Systems{% endblock %}
+
+{% block content %}
+    <a href="{% url 'doctors_urls:list-doctors' %}" class="btn">Back</a>
+    <div class="card">
+        <h2>Create Doctor Record</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn">Create Record</button>
+        </form>
+    </div>
+{% endblock %}

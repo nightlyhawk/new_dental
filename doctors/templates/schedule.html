@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if schedule %}Edit{% else %}Create{% endif %} Schedule - Bright Smile Dental Systems{% endblock %}
+
+{% block content %}
+<h1>{% if schedule %}Edit{% else %}Create{% endif %} Schedule for {{ doctor.name }}</h1>
+
+<div class="card">
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="clinic">Clinic</label>
+            <select id="clinic" name="clinic" required>
+                <option value="">Select a clinic</option>
+                {% for clinic in clinics %}
+                <option value="{{ clinic.id }}" {% if schedule and schedule.clinic.id == clinic.id %}selected{% endif %}>
+                    {{ clinic.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="schedule-grid">
+            {% for day in days_of_week %}
+            <div class="schedule-day">
+                <h3>{{ day|title }}</h3>
+                <div class="form-group">
+                    <label for="{{ day }}_start">Start Time</label>
+                    <input type="time" id="{{ day }}_start" name="{{ day }}_start" 
+                           value="{% if schedule %}{{ schedule|get_start_time:day }}{% endif %}">
+                </div>
+                <div class="form-group">
+                    <label for="{{ day }}_end">End Time</label>
+                    <input type="time" id="{{ day }}_end" name="{{ day }}_end"
+                           value="{% if schedule %}{{ schedule|get_end_time:day }}{% endif %}">
+                </div>
+                <div class="form-group">
+                    <label for="{{ day }}_is_working">Working Day</label>
+                    <input type="checkbox" id="{{ day }}_is_working" name="{{ day }}_is_working"
+                           {% if schedule and schedule|is_working_day:day %}checked{% endif %}>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn">{% if schedule %}Update{% else %}Create{% endif %} Schedule</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .schedule-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    .schedule-day {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+    }
+    .schedule-day h3 {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        color: var(--primary-color);
+    }
+    .form-group {
+        margin-bottom: 0.5rem;
+    }
+    label {
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+    input[type="time"],
+    select {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid var(--light-gray);
+        border-radius: 4px;
+    }
+    input[type="checkbox"] {
+        margin-right: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const day = this.id.split('_')[0];
+                const startTime = document.getElementById(`${day}_start`);
+                const endTime = document.getElementById(`${day}_end`);
+                
+                if (this.checked) {
+                    startTime.disabled = false;
+                    endTime.disabled = false;
+                } else {
+                    startTime.disabled = true;
+                    endTime.disabled = true;
+                    startTime.value = '';
+                    endTime.value = '';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

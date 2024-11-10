@@ -1,0 +1,15 @@
+{% extends 'start.html' %}
+
+{% block title %}Create Clinic - Bright Smile Dental Systems{% endblock %}
+
+{% block content %}
+    <a href="{% url 'clinics_urls:list-clinics' %}" class="btn">Back</a>
+    <div class="card">
+        <h2>Create Clinic</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn">Create</button>
+        </form>
+    </div>
+{% endblock %}

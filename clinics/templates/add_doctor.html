@@ -4,6 +4,7 @@
 {% block title %}Add Doctors to {{ clinic.name }} - Bright Smile Dental Systems{% endblock %}
 
 {% block content %}
+{% load  clinic_filters %}
 <h1>Add Doctors to {{ clinic.name }}</h1>
 
 <div class="card">
@@ -17,13 +18,13 @@
             </tr>
         </thead>
         <tbody>
-            {% for affiliation in clinic.doctor_affiliations.all %}
+            {% for doctor in affiliations.all %}
             <tr>
-                <td>{{ affiliation.doctor.name }}</td>
-                <td>{{ affiliation.doctor.specialties|join:", " }}</td>
+                <td>{{ doctor.name }}</td>
+                <td>{{ doctor.specialties.all|join_names }}</td>
                 <td>
-                    <a href="{% url 'edit_doctor_affiliation' clinic.id affiliation.id %}" class="btn btn-small">Edit</a>
-                    <form method="post" action="{% url 'remove_doctor_from_clinic' clinic.id affiliation.id %}" style="display: inline;">
+                    <a href="{% url 'doctors_urls:update-doctor' doctor.id %}" class="btn btn-small">Edit</a>
+                    <form method="post" action="{% url 'clinics_urls:remove-doctor' clinic.id %}?dpk={{ doctor.id }}" style="display: inline;">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-small btn-danger">Remove</button>
                     </form>
@@ -40,24 +41,16 @@
 
 <div class="card">
     <h2>Add New Doctor</h2>
-    <form method="post" action="{% url 'add_doctor_to_clinic' clinic.id %}">
+    <form method="post" action="{% url 'clinics_urls:add-doctor' clinic.id %}">
         {% csrf_token %}
         <div class="form-group">
             <label for="doctor">Select Doctor</label>
             <select id="doctor" name="doctor" required>
                 <option value="">Choose a doctor</option>
-                {% for doctor in available_doctors %}
-                <option value="{{ doctor.id }}">{{ doctor.name }} - {{ doctor.specialties|join:", " }}</option>
+                {% for doctor in doctors.all %}
+                <option value="{{ doctor.id }}">{{ doctor.name }} - {{ doctor.specialties.all|join_names }}</option>
                 {% endfor %}
             </select>
-        </div>
-        <div class="form-group">
-            <label for="office_address">Office Address</label>
-            <input type="text" id="office_address" name="office_address" required>
-        </div>
-        <div class="form-group">
-            <label for="working_schedule">Working Schedule</label>
-            <textarea id="working_schedule" name="working_schedule" rows="3" required></textarea>
         </div>
         <button type="submit" class="btn">Add Doctor to Clinic</button>
     </form>

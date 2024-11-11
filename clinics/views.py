@@ -59,17 +59,35 @@ class ClinicDetailView(LoginRequiredMixin, DetailView):
         return self.clinic
 
 @login_required
-def add_doctor(request, pk, dpk=None):
-    dpk = request.query_params.get('dpk', None)
+def add_doctor(request, pk):
     if request.method == 'POST':
+        clinic = Clinic.objects.get(id=pk)
+        doctor = Doctor.objects.get(id=request.POST.get('doctor'))
+        clinic.doctors.add(doctor)
+        clinic.save()
+        return redirect('clinics_urls:list-clinics')
+    else:
+        clinic = Clinic.objects.get(id=pk)
+        clinic_doctors = clinic.doctors.all()
+        doctors = Doctor.objects.all()
+        return render(request, 'add_doctor.html', {'doctors': doctors, 'affiliations': clinic_doctors, 'clinic': clinic})
+    
+@login_required
+def remove_doctor(request, pk, dpk=None):
+    if request.method == 'POST':
+        dpk = request.GET.get('dpk', None)
         clinic = Clinic.objects.get(id=pk)
         doctor = Doctor.objects.get(id=dpk)
         clinic.doctors.add(doctor)
-        clinic.save(update_fields=('doctors'))
-        return render(request, 'clinic_detail.html', {})
-    else:
+        clinic.save()
+        clinic_doctors = Clinic.objects.get(id=pk).doctors.all()
         doctors = Doctor.objects.all()
-        return render(request, 'add_doctor.html', {'doctors': doctors})
+        return render(request, 'add_doctor.html', {'doctors': doctors, 'affiliations': clinic_doctors})
+    else:
+        clinic_doctors = Clinic.objects.get(id=pk).doctors.all()
+        doctors = Doctor.objects.all()
+        return render(request, 'add_doctor.html', {'doctors': doctors, 'affiliations': clinic_doctors})
+    
 
 @login_required
 def retrieve_working_doctors(request, pk):

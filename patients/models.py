@@ -1,6 +1,7 @@
 from django.db import models
 from doctors.models import Doctor, Procedure
 from clinics.models import Clinic
+from phonenumber_field.modelfields import PhoneNumberField
 
 # Create your models here.
 class Patient(models.Model):
@@ -19,7 +20,7 @@ class Patient(models.Model):
                               choices=gender_choices,
                               default=OTHER)
     ssn_last_4 = models.CharField(max_length=4, default="4444")
-    phone_number = models.IntegerField()
+    phone_number = PhoneNumberField()
     def __str__(self):
         return self.name
 

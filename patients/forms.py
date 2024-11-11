@@ -2,12 +2,12 @@ from django import forms
 from .models import Patient, Visit, Appointment
 from doctors.models import Procedure, Doctor
 from clinics.models import Clinic
-
+from phonenumber_field.formfields import PhoneNumberField
 
 class PatientForm(forms.ModelForm):
     d_o_b = forms.DateField(widget=(forms.DateInput(attrs={'type':'date'})), label="Date of Birth")
     ssn_last_4 = forms.CharField(widget=(forms.NumberInput), label="SSN last four digits")
-    phone_number = forms.CharField(widget=(forms.TextInput(attrs={'type': 'tel'})))
+    phone_number = PhoneNumberField(region="CA")
     # gender = forms.ModelChoiceField(widget=(forms.Select),empty_label=('select gender'), label=('Gender'))
 
     class Meta:

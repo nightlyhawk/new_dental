@@ -65,7 +65,7 @@ def add_doctor(request, pk):
         doctor = Doctor.objects.get(id=request.POST.get('doctor'))
         clinic.doctors.add(doctor)
         clinic.save()
-        return redirect('clinics_urls:list-clinics')
+        return redirect('clinics_urls:detail-clinic', pk=clinic.pk)
     else:
         clinic = Clinic.objects.get(id=pk)
         clinic_doctors = clinic.doctors.all()
@@ -78,11 +78,11 @@ def remove_doctor(request, pk, dpk=None):
         dpk = request.GET.get('dpk', None)
         clinic = Clinic.objects.get(id=pk)
         doctor = Doctor.objects.get(id=dpk)
-        clinic.doctors.add(doctor)
+        clinic.doctors.remove(doctor)
         clinic.save()
         clinic_doctors = Clinic.objects.get(id=pk).doctors.all()
         doctors = Doctor.objects.all()
-        return render(request, 'add_doctor.html', {'doctors': doctors, 'affiliations': clinic_doctors})
+        return redirect('clinics_urls:detail-clinic', pk=clinic.pk)
     else:
         clinic_doctors = Clinic.objects.get(id=pk).doctors.all()
         doctors = Doctor.objects.all()

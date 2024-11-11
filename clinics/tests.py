@@ -52,6 +52,12 @@ class ClinicViewsTestCase(TestCase):
 
     def test_add_doctor_view(self):
         url = reverse('clinics_urls:add-doctor', kwargs={'pk': self.clinic.pk})
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.doctor, self.clinic.doctors.all())
+
+    def test_remove_doctor_view(self):
+        url = reverse('clinics_urls:remove-doctor', kwargs={'pk': self.clinic.pk})
         response = self.client.post(url, {'dpk': self.doctor.pk})
         self.assertEqual(response.status_code, 200)
         self.assertIn(self.doctor, self.clinic.doctors.all())

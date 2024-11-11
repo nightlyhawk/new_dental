@@ -33,7 +33,7 @@ def doctor_create(request):
         if form.is_valid():
             form.save()
             if request.user.is_authenticated:
-                return  redirect('doctor_detail.html', form.cleaned_data['id'])
+                return  redirect('doctor_detail.html', pk=form.cleaned_data['id'])
             return render(request, 'success.html', {'action_text': 'create another doctor record?', 'action_url': 'doctors_urls:create-doctor'})
     else:
         form = DoctorForm()
